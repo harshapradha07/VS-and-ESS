@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}VulnSeeker | Advanced Assessment{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="glass-panel">
+    <div class="logo">
+        <i class="fa-solid fa-shield-halved"></i> <span>VULN<span class="highlight">SEEKER</span></span>
+    </div>
+    <div class="status-bar">
+        <span class="status-indicator">SYSTEM READY</span>
+        {% if user.is_authenticated %}
+        <span class="user-badge"><i class="fa-solid fa-user"></i> {{ user.username }}</span>
+        <a href="/logout" class="logout-btn"><i class="fa-solid fa-power-off"></i></a>
+        {% endif %}
+        <span id="clock" class="clock">00:00:00</span>
+    </div>
+</header>
+
+<!-- Main Content Grid -->
+<main class="dashboard-grid">
+
+    <!-- Target Input Panel -->
+    <section class="scan-panel glass-panel">
+        <h2><i class="fa-solid fa-crosshairs"></i> Target Acquisition</h2>
+        <div class="input-group">
+            <input type="text" id="targetInput" placeholder="Enter IP or Hostname (e.g. 127.0.0.1)" value="127.0.0.1">
+            <button id="scanBtn" class="cyber-btn">
+                <i class="fa-solid fa-radar"></i> INITIATE SCAN
+            </button>
+            <button id="simulateBtn" class="cyber-btn secondary">
+                <i class="fa-solid fa-bug"></i> SIMULATE EXPLOIT
+            </button>
+            <button id="reportBtn" class="cyber-btn tertiary">
+                <i class="fa-solid fa-file-pdf"></i> REPORT
+            </button>
+        </div>
+        <div class="scan-progress hidden" id="scanProgress">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <span class="progress-text">SCANNING NETWORK NODES...</span>
+        </div>
+    </section>
+
+    <!-- Live Console -->
+    <section class="console-panel glass-panel">
+        <h2><i class="fa-solid fa-terminal"></i> System Log</h2>
+        <div class="console-output" id="consoleOutput">
+            <p class="log-entry system">[SYSTEM] Initialization complete.</p>
+            <p class="log-entry system">[SYSTEM] Ready for target assignment.</p>
+        </div>
+    </section>
+
+    <!-- Results: Risk Meter -->
+    <section class="risk-panel glass-panel">
+        <h2><i class="fa-solid fa-triangle-exclamation"></i> Threat Level</h2>
+        <div class="risk-meter-container">
+            <svg class="risk-gauge" viewBox="0 0 100 50">
+                <path class="gauge-bg" d="M10,50 A40,40 0 0,1 90,50" />
+                <path class="gauge-fill" id="riskGaugeFill" d="M10,50 A40,40 0 0,1 10,50" />
+                <text x="50" y="45" class="risk-score" id="riskScore">0%</text>
+            </svg>
+            <div class="risk-label" id="riskLabel">CALCULATING...</div>
+        </div>
+    </section>
+
+    <!-- Results: Ports -->
+    <section class="results-panel glass-panel">
+        <h2><i class="fa-solid fa-network-wired"></i> Open Ports</h2>
+        <div class="results-list" id="portsList">
+            <div class="empty-state">No scan data available.</div>
+        </div>
+    </section>
+
+    <!-- Results: Vulnerabilities -->
+    <section class="vuln-panel glass-panel">
+        <h2><i class="fa-solid fa-biohazard"></i> Vulnerabilities Detected</h2>
+        <div class="results-list" id="vulnList">
+            <div class="empty-state">Awaiting scan results.</div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>EDUCATIONAL PURPOSE ONLY - AUTHORIZED USE REQUIRED</p>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

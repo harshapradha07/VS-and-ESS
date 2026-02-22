@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {
+    --bg-color: #050505;
+    --panel-bg: rgba(20, 20, 20, 0.7);
+    --text-color: #e0e0e0;
+    --accent-cyan: #00f3ff;
+    --accent-green: #0aff00;
+    --accent-warn: #ffbf00;
+    --accent-danger: #ff003c;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --glass-blur: 10px;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Orbitron', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 60, 0.1) 0%, transparent 20%);
+    overflow-x: hidden;
+}
+
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Glass Panel Utility */
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+    box-shadow: 0 10px 40px 0 rgba(0, 243, 255, 0.1);
+    border-color: rgba(0, 243, 255, 0.3);
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+.logo .highlight {
+    color: var(--accent-cyan);
+}
+
+.status-bar {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+}
+
+.status-indicator {
+    color: var(--accent-green);
+    text-shadow: 0 0 5px var(--accent-green);
+    animation: pulse 2s infinite;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 20px;
+    grid-template-areas:
+        "scan risk"
+        "console console"
+        "results vuln";
+}
+
+.scan-panel { grid-area: scan; }
+.risk-panel { grid-area: risk; }
+.console-panel { grid-area: console; }
+.results-panel { grid-area: results; }
+.vuln-panel { grid-area: vuln; }
+
+h2 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--accent-cyan);
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Inputs & Buttons */
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--accent-cyan);
+    padding: 12px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+.cyber-btn {
+    background: transparent;
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    padding: 10px 20px;
+    font-family: var(--font-display);
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    border-radius: 6px;
+}
+
+.cyber-btn:hover {
+    background: var(--accent-cyan);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-cyan);
+}
+
+.cyber-btn.secondary {
+    border-color: var(--accent-danger);
+    color: var(--accent-danger);
+}
+
+.cyber-btn.secondary:hover {
+    background: var(--accent-danger);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-danger);
+}
+
+.cyber-btn.tertiary {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.cyber-btn.tertiary:hover {
+    background: var(--accent-green);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent-green);
+}
+
+/* Progress Bar */
+.scan-progress {
+    margin-top: 20px;
+}
+.progress-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+    transition: width 0.3s;
+}
+.progress-text {
+    font-size: 12px;
+    color: var(--accent-cyan);
+    margin-top: 5px;
+    display: block;
+    animation: blink 1s infinite;
+}
+
+/* Console */
+.console-output {
+    background: rgba(0, 0, 0, 0.8);
+    height: 150px;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 13px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+}
+.log-entry { margin-bottom: 5px; }
+.log-entry.system { color: #888; }
+.log-entry.info { color: var(--accent-cyan); }
+.log-entry.warn { color: var(--accent-warn); }
+.log-entry.danger { color: var(--accent-danger); }
+
+/* Results Lists */
+.results-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.result-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--accent-cyan);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 0 6px 6px 0;
+}
+.result-card.critical { border-left-color: var(--accent-danger); }
+.result-card.medium { border-left-color: var(--accent-warn); }
+.result-card-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.result-card-details {
+    font-size: 12px;
+    color: #ccc;
+}
+
+/* Risk Meter SVG */
+.risk-meter-container {
+    text-align: center;
+    position: relative;
+}
+.risk-gauge {
+    width: 100%;
+    height: 120px;
+}
+.gauge-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 10;
+    stroke-linecap: round;
+}
+.gauge-fill {
+    fill: none;
+    stroke: var(--accent-cyan);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 125; /* Approx arc length */
+    stroke-dashoffset: 125; /* Start empty */
+    transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+}
+.risk-score {
+    fill: #fff;
+    font-size: 18px;
+    font-family: var(--font-display);
+    text-anchor: middle;
+}
+.risk-label {
+    margin-top: -20px;
+    font-weight: bold;
+    color: var(--accent-cyan);
+}
+
+/* Footer */
+footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.hidden { display: none; }
+
+    </style>
+</head>
+<body>
+    
+<div class="auth-wrapper">
+    <div class="auth-box glass-panel">
+        <div class="auth-header">
+            <i class="fa-solid fa-shield-halved fa-3x"></i>
+            <h1>ACCESS CONTROL</h1>
+            <p>Identity Verification Required</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="alert">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/login" method="POST" class="auth-form">
+            <div class="input-group">
+                <label><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" name="username" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-key"></i> Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="cyber-btn full-width">
+                AUTHENTICATE
+            </button>
+        </form>
+
+        <div class="auth-divider">
+            <span>OR</span>
+        </div>
+
+        <a href="/login/google" class="oauth-btn google-btn">
+            <i class="fa-brands fa-google"></i> Sign in with Google
+        </a>
+
+        <div class="auth-footer">
+            <a href="/register">Initialize New User Protocol >></a>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const scanBtn = document.getElementById('scanBtn');
+    const simulateBtn = document.getElementById('simulateBtn');
+    const reportBtn = document.getElementById('reportBtn');
+    const targetInput = document.getElementById('targetInput');
+    const scanProgress = document.getElementById('scanProgress');
+    const progressBar = document.querySelector('.progress-fill');
+    const consoleOutput = document.getElementById('consoleOutput');
+    const portsList = document.getElementById('portsList');
+    const vulnList = document.getElementById('vulnList');
+    const riskScoreEl = document.getElementById('riskScore');
+    const riskGaugeFill = document.getElementById('riskGaugeFill');
+    const riskLabel = document.getElementById('riskLabel');
+    const clockEl = document.getElementById('clock');
+
+    // Live Clock
+    setInterval(() => {
+        const now = new Date();
+        clockEl.textContent = now.toLocaleTimeString('en-GB');
+    }, 1000);
+
+    // Initial log
+    log("System idle. Waiting for user input...", "info");
+
+    scanBtn.addEventListener('click', () => {
+        startScan(true);
+    });
+
+    simulateBtn.addEventListener('click', () => {
+        // Simulation mode also triggers the main scan flow but we could differentiate if needed
+        // For this app, they are integrated
+        startScan(true);
+    });
+
+    reportBtn.addEventListener('click', () => {
+        window.open('/report', '_blank');
+    });
+
+    function startScan(isSimulation) {
+        const target = targetInput.value;
+        if (!target) {
+            log("[ERROR] No target specified.", "danger");
+            return;
+        }
+
+        // Reset UI
+        scanProgress.classList.remove('hidden');
+        progressBar.style.width = "0%";
+        portsList.innerHTML = '<div class="empty-state">Scanning...</div>';
+        vulnList.innerHTML = '<div class="empty-state">Analyzing...</div>';
+        resetRiskMeter();
+
+        log(`[SCAN] Initiating assessment on ${target}...`, "info");
+
+        // Mock progress animation
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 90) clearInterval(interval);
+            width += Math.random() * 10;
+            if (width > 90) width = 90;
+            progressBar.style.width = width + "%";
+        }, 300);
+
+        fetch('/api/scan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ target: target })
+        })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(interval);
+                progressBar.style.width = "100%";
+                setTimeout(() => {
+                    scanProgress.classList.add('hidden');
+                }, 1000);
+
+                if (data.status === 'complete') {
+                    log(`[SCAN] Scan complete for ${data.target}.`, "success");
+                    displayScanResults(data.scan_data);
+                    displayExploitResults(data.exploits);
+                    updateRiskMeter(data.risk);
+                } else {
+                    log(`[ERROR] Scan returned unexpected status.`, "danger");
+                }
+            })
+            .catch(error => {
+                clearInterval(interval);
+                scanProgress.classList.add('hidden');
+                log(`[ERROR] Connection failed: ${error}`, "danger");
+            });
+    }
+
+    function displayScanResults(scanData) {
+        portsList.innerHTML = '';
+        if (scanData.protocols && scanData.protocols.length > 0) {
+            scanData.protocols.forEach(proto => {
+                proto.ports.forEach(port => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    card.innerHTML = `
+                        <div class="result-card-header">
+                            <span>Port ${port.port}/${proto.protocol}</span>
+                            <span style="color: var(--accent-green)">${port.state.toUpperCase()}</span>
+                        </div>
+                        <div class="result-card-details">
+                            Service: ${port.name} <br>
+                            Product: ${port.product} ${port.version}
+                        </div>
+                    `;
+                    portsList.appendChild(card);
+                    log(`[FOUND] Open port ${port.port} (${port.name})`, "info");
+                });
+            });
+        } else {
+            portsList.innerHTML = '<div class="empty-state">No open ports found.</div>';
+            log(`[INFO] No open ports found on target.`, "warn");
+        }
+    }
+
+    function displayExploitResults(exploits) {
+        vulnList.innerHTML = '';
+        if (exploits && exploits.length > 0) {
+            exploits.forEach(ex => {
+                const severityClass = ex.severity === 'High' ? 'critical' : (ex.severity === 'Medium' ? 'medium' : '');
+                const card = document.createElement('div');
+                card.className = `result-card ${severityClass}`;
+                card.innerHTML = `
+                    <div class="result-card-header">
+                        <span>${ex.name}</span>
+                        <span>${ex.severity.toUpperCase()}</span>
+                    </div>
+                    <div class="result-card-details">
+                        Status: ${ex.status} <br>
+                        ${ex.details}
+                    </div>
+                `;
+                vulnList.appendChild(card);
+
+                if (ex.severity === 'High') {
+                    log(`[CRITICAL] ${ex.name} detected!`, "danger");
+                } else {
+                    log(`[VULN] ${ex.name} detected.`, "warn");
+                }
+            });
+        } else {
+            vulnList.innerHTML = '<div class="empty-state">No vulnerabilities detected.</div>';
+            log(`[INFO] System appears secure.`, "success");
+        }
+    }
+
+    function updateRiskMeter(risk) {
+        // Start text animation
+        let count = 0;
+        const targetScore = risk.score;
+        const scoreInterval = setInterval(() => {
+            if (count >= targetScore) {
+                count = targetScore;
+                clearInterval(scoreInterval);
+            } else {
+                count++;
+            }
+            riskScoreEl.textContent = count + "%";
+        }, 20);
+
+        riskLabel.textContent = risk.level;
+        riskLabel.style.color = getRiskColor(risk.level); // Or use the one from backend
+
+        // SVG Gauge Animation
+        // Dasharray is approx 125 for full semi-circle.
+        // 0% risk -> full offset (hidden)
+        // 100% risk -> 0 offset (full)
+        // So offset = 125 - (125 * percentage / 100)
+        const maxOffset = 125;
+        const newOffset = maxOffset - (maxOffset * targetScore / 100);
+
+        riskGaugeFill.style.strokeDashoffset = newOffset;
+        riskGaugeFill.style.stroke = getRiskColor(risk.level);
+    }
+
+    function resetRiskMeter() {
+        riskScoreEl.textContent = "0%";
+        riskLabel.textContent = "CALCULATING...";
+        riskGaugeFill.style.strokeDashoffset = 125;
+        riskGaugeFill.style.stroke = "var(--accent-cyan)";
+    }
+
+    function getRiskColor(level) {
+        switch (level) {
+            case 'CRITICAL': return 'var(--accent-danger)';
+            case 'HIGH': return '#ff6600'; // Orange
+            case 'MEDIUM': return 'var(--accent-warn)';
+            default: return 'var(--accent-green)';
+        }
+    }
+
+    function log(message, type = "system") {
+        const p = document.createElement('p');
+        p.className = `log-entry ${type}`;
+        p.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
+        consoleOutput.prepend(p);
+    }
+});
+
+</script>
+</html>

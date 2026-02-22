@@ -1,0 +1,6 @@
+Flask==3.0.0
+python-nmap==0.7.1
+Flask-Login
+Flask-SQLAlchemy
+Authlib
+requests==2.31.0

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Register | VulnSeeker{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-box glass-panel">
+        <div class="auth-header">
+            <i class="fa-solid fa-user-plus fa-3x"></i>
+            <h1>NEW OPERATIVE</h1>
+            <p>Create Secure Identity</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="alert">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST" class="auth-form">
+            <div class="input-group">
+                <label><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" name="username" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-envelope"></i> Email</label>
+                <input type="email" name="email" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-key"></i> Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="cyber-btn full-width">
+                REGISTER IDENTITY
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="/login">
+                << Return to Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
