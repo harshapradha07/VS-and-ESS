@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init DB
 db.init_app(app)
-
+#login manager starts here 
 # Init Login Manager
 login_manager = LoginManager()
 login_manager.login_view = 'login'
